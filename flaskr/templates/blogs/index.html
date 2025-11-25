@@ -1,0 +1,19 @@
+{% extends "/layout.html" %}
+
+{% block title %}ブログ一覧{% endblock %}
+{% block h1 %}ミニブログを作ってみよう{% endblock %}
+
+{% block content %}
+    <p><a href="{{ url_for('blogs.create') }}">新規投稿</a></p>
+  <div>
+    <ul>
+      {% for blog in blogs %} <!-- ループさせてそれぞれ要素を取り出す -->
+        <li>
+          タイトル: <a href="{{ url_for('blogs.detail', blog_id=blog.id) }}">{{ blog.title }}</a>,
+          本文: {{ blog.body }}, 投稿者: {{ blog.user_name }}, 投稿日時: {{ blog.created_at }},
+          <a href="{{ url_for('blogs.edit', blog_id=blog.id) }}">[編集]</a>
+        </li>
+    　{% endfor %}
+    </ul>
+  </div>
+{% endblock %}
