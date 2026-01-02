@@ -1,28 +1,41 @@
 from flask import Flask
-# SQLAlchemyをインポート
 from flask_sqlalchemy import SQLAlchemy
-# SQLAlchemyのdeclarative_baseをインポート
 from sqlalchemy.orm import declarative_base
+from dotenv import load_dotenv
+from flask_cors import CORS
+
+load_dotenv()
 
 Base = declarative_base()
-db = SQLAlchemy()  # ここでインスタンス作成
+db = SQLAlchemy()
+
 
 def create_app():
-    # アプリケーションのインスタンスを作成
     app = Flask(__name__)
-    # 🔑 セッション・flash()・ログイン用に必須
-    app.config['SECRET_KEY'] = 'dev'  # 開発用（本番では安全なランダム文字列に変更）
-    # SQLiteのデータベースファイルを指定
+    app.config['SECRET_KEY'] = 'dev'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flaskr.db'
-    # SQLAlchemyの設定を無効化
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    db.init_app(app)  # SQLAlchemyのインスタンスをアプリに紐付け
+    # ★ ここで CORS を有効化
+    CORS(
+        app,
+        supports_credentials=True,
+        origins=[
+            "http://localhost:5173",
+            "http://127.0.0.1:5173"
+        ]
+    )
 
-    # blueprintの登録
+    db.init_app(app)
+
+    from .tama_auth import init_auth
+    init_auth(app)
+
+
     from . import blogs
     app.register_blueprint(blogs.blog_bp)
-    # データベースのテーブルを作成
+
     with app.app_context():
         db.create_all()
+
     return app

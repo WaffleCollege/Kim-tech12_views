@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>ブログ編集</title>
-</head>
+{% extends "/layout.html" %}
+{% block title %}ブログを編集{% endblock %}
+{% block h1 %}おかえり！{% endblock %}
 <body>
   <h1>ブログを編集</h1>
 
@@ -16,6 +13,7 @@
   {% endwith %}
 
   <form method="post">
+    {% block content %}
     <p>
       <label>タイトル：</label><br>
       <input type="text" name="title" value="{{ blog.title }}" size="40">
@@ -33,5 +31,4 @@
       <a href="{{ url_for('blogs.detail', blog_id=blog.id) }}">キャンセル</a>
     </p>
   </form>
-</body>
-</html>
+{% endblock %}

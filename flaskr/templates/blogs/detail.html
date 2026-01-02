@@ -20,7 +20,7 @@
 
     <h2>コメント</h2>
     {% if blog.comments %}
-        <ul>
+        <ul id="comment-list">
             {% for c in blog.comments %}
             <li>
                 <strong>{{ c.user_name }}</strong> ({{ c.created_at.strftime('%Y-%m-%d %H:%M') }})<br>
@@ -44,6 +44,33 @@
     <button type="submit">投稿</button>
     </form>
 
+    <button id="ai-comment-btn" data-blog-id="{{ blog.id }}">
+        AIコメントを追加する
+    </button>
+
+    <script>
+    document.getElementById("ai-comment-btn").addEventListener("click", function() {
+        const blogId = this.dataset.blogId;
+
+        fetch(`/blogs/${blogId}/ai-comment`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const li = document.createElement("li");
+                li.innerHTML = `<strong>${data.user_name}:</strong> ${data.body}`;
+                document.getElementById("comment-list").appendChild(li);
+            } else {
+                alert("コメント追加に失敗しました");
+            }
+        });
+    });
+    </script>
 
     <p><a href="{{ url_for('blogs.index') }}">← 一覧に戻る</a></p>
 {% endblock %}
